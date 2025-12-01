@@ -1,0 +1,26 @@
+# Ignore build and gradle caches from subprojects
+inventario-almacen/build/
+inventario-almacen/.gradle/
+inventario-almacen/build/**
+
+# Ignore gradle wrapper distribution zips (keep wrapper jar and properties)
+inventario-almacen/gradle/wrapper/*-bin.zip
+
+# Ignore logs
+inventario-almacen/logs/
+
+# Ignore compiled classes and jars
+**/*.class
+**/build/libs/*.jar
+**/*.jar
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Env
+.env

@@ -1,0 +1,33 @@
+# Gradle
+.gradle/
+build/
+**/build/
+
+# Gradle Wrapper distributions (zip files, can be large)
+gradle/wrapper/*.zip
+
+# IDEs
+.vscode/
+.idea/
+*.iml
+
+# Logs
+logs/
+*.log
+
+# Generated classes and jars
+**/*.class
+**/*.jar
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+
+# Misc
+tmp/
+
+# Do not ignore gradle wrapper jar and properties which are useful
+# (keep gradle/wrapper/gradle-wrapper.jar and gradle/wrapper/gradle-wrapper.properties in repo)
