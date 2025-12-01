@@ -1,10 +1,20 @@
-# Gradle
+# Gradle caches and build artifacts
 .gradle/
 build/
 **/build/
 
-# Gradle Wrapper distributions (zip files, can be large)
+# Do not commit gradle distribution zips (can be very large)
+# Keep gradle-wrapper.jar and gradle-wrapper.properties, but ignore the big binary distributions
+gradle/wrapper/*-bin.zip
 gradle/wrapper/*.zip
+
+# Gradle libs produced by build
+build/libs/
+**/build/libs/
+
+# Compiled classes and jars
+**/*.class
+**/*.jar
 
 # IDEs
 .vscode/
@@ -14,10 +24,6 @@ gradle/wrapper/*.zip
 # Logs
 logs/
 *.log
-
-# Generated classes and jars
-**/*.class
-**/*.jar
 
 # OS files
 .DS_Store
@@ -29,5 +35,6 @@ Thumbs.db
 # Misc
 tmp/
 
-# Do not ignore gradle wrapper jar and properties which are useful
-# (keep gradle/wrapper/gradle-wrapper.jar and gradle/wrapper/gradle-wrapper.properties in repo)
+# Keep wrapper jar and properties tracked (explicitly allow)
+!gradle/wrapper/gradle-wrapper.jar
+!gradle/wrapper/gradle-wrapper.properties
