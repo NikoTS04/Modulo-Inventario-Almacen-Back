@@ -51,6 +51,14 @@ public class CategoriaService {
         return mapper.toCategoriaDTO(saved);
     }
 
+    @Transactional(readOnly = true)
+    public CategoriaDTO obtenerCategoria(UUID id) {
+        log.debug("Obteniendo categoría ID: {}", id);
+        CategoriaMaterial categoria = categoriaRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Categoría", "id", id));
+        return mapper.toCategoriaDTO(categoria);
+    }
+
     public CategoriaDTO actualizarCategoria(UUID id, CategoriaDTO dto) {
         log.info("Actualizando categoría ID: {}", id);
         

@@ -56,6 +56,14 @@ public class UnidadMedidaService {
         return mapper.toUnidadDTO(saved);
     }
 
+    @Transactional(readOnly = true)
+    public UnidadDTO obtenerUnidad(UUID id) {
+        log.debug("Obteniendo unidad ID: {}", id);
+        UnidadMedida unidad = unidadRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Unidad", "id", id));
+        return mapper.toUnidadDTO(unidad);
+    }
+
     public UnidadDTO actualizarUnidad(UUID id, UnidadDTO dto) {
         log.info("Actualizando unidad ID: {}", id);
         

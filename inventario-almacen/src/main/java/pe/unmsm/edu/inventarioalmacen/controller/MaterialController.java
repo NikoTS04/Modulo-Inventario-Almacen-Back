@@ -7,7 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pe.unmsm.edu.inventarioalmacen.dto.*;
-import pe.unmsm.edu.inventarioalmacen.service.MaterialService;
+import pe.unmsm.edu.inventarioalmacen.facade.MaterialFacade;
 
 import java.util.UUID;
 
@@ -18,7 +18,7 @@ import java.util.UUID;
 @CrossOrigin(origins = {"http://localhost:5173", "http://localhost:3000"})
 public class MaterialController {
 
-    private final MaterialService materialService;
+    private final MaterialFacade materialFacade;
 
     @GetMapping
     public ResponseEntity<MaterialListResponseDTO> listarMateriales(
@@ -29,21 +29,21 @@ public class MaterialController {
             @RequestParam(required = false) Boolean activo) {
         
         log.info("GET /materials - page: {}, limit: {}", page, limit);
-        MaterialListResponseDTO response = materialService.consultarMateriales(page, limit, sort, categoria, activo);
+        MaterialListResponseDTO response = materialFacade.consultarMateriales(page, limit, sort, categoria, activo);
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{materialId}")
     public ResponseEntity<MaterialDetailDTO> obtenerMaterial(@PathVariable UUID materialId) {
         log.info("GET /materials/{}", materialId);
-        MaterialDetailDTO material = materialService.obtenerMaterial(materialId);
+        MaterialDetailDTO material = materialFacade.obtenerMaterial(materialId);
         return ResponseEntity.ok(material);
     }
 
     @PostMapping
     public ResponseEntity<MaterialDetailDTO> crearMaterial(@Valid @RequestBody MaterialCreateDTO dto) {
         log.info("POST /materials - código: {}", dto.getCodigo());
-        MaterialDetailDTO created = materialService.crearMaterial(dto);
+        MaterialDetailDTO created = materialFacade.crearMaterial(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
@@ -52,7 +52,7 @@ public class MaterialController {
             @PathVariable UUID materialId,
             @Valid @RequestBody MaterialCreateDTO dto) {
         log.info("PUT /materials/{}", materialId);
-        MaterialDetailDTO updated = materialService.editarMaterial(materialId, dto);
+        MaterialDetailDTO updated = materialFacade.editarMaterial(materialId, dto);
         return ResponseEntity.ok(updated);
     }
 
@@ -61,30 +61,30 @@ public class MaterialController {
             @PathVariable UUID materialId,
             @RequestBody MaterialUpdatePatchDTO patch) {
         log.info("PATCH /materials/{}", materialId);
-        MaterialDetailDTO updated = materialService.editarMaterialParcial(materialId, patch);
+        MaterialDetailDTO updated = materialFacade.editarMaterialParcial(materialId, patch);
         return ResponseEntity.ok(updated);
     }
 
     @DeleteMapping("/{materialId}")
     public ResponseEntity<Void> desactivarMaterial(@PathVariable UUID materialId) {
         log.info("DELETE /materials/{}", materialId);
-        materialService.desactivarMaterial(materialId);
+        materialFacade.desactivarMaterial(materialId);
         return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/{materialId}/activate")
     public ResponseEntity<MaterialDetailDTO> activarMaterial(@PathVariable UUID materialId) {
         log.info("POST /materials/{}/activate", materialId);
-        MaterialDetailDTO activated = materialService.activarMaterial(materialId);
+        MaterialDetailDTO activated = materialFacade.activarMaterial(materialId);
         return ResponseEntity.ok(activated);
     }
 
     @PutMapping("/{materialId}/reorder-config")
-    public ResponseEntity<Void> definirConfiguracionReorden(
+    public ResponseEntity<MaterialDetailDTO> definirConfiguracionReorden(
             @PathVariable UUID materialId,
             @Valid @RequestBody ReordenConfigDTO configDTO) {
         log.info("PUT /materials/{}/reorder-config", materialId);
-        materialService.definirReorden(materialId, configDTO);
-        return ResponseEntity.ok().build();
+        MaterialDetailDTO updated = materialFacade.definirReordenConfig(materialId, configDTO);
+        return ResponseEntity.ok(updated);
     }
 }

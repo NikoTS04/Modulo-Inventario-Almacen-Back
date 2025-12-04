@@ -215,4 +215,22 @@ public class MaterialService {
                 .totalPages(materialesPage.getTotalPages())
                 .build();
     }
+
+    public MaterialDetailDTO definirReordenConfig(UUID materialId, ReordenConfigDTO configDTO) {
+        log.info("Definiendo configuración de reorden para material {}", materialId);
+        
+        Material material = materialRepository.findById(materialId)
+                .orElseThrow(() -> new ResourceNotFoundException("Material", "id", materialId));
+        
+        material.definirReordenConfig(
+                configDTO.getStockMinimo(),
+                configDTO.getPuntoReorden(),
+                configDTO.getActivarAlerta() != null ? configDTO.getActivarAlerta() : true
+        );
+        
+        Material updated = materialRepository.save(material);
+        log.info("Configuración de reorden actualizada exitosamente");
+        
+        return materialMapper.toDetailDTO(updated);
+    }
 }
