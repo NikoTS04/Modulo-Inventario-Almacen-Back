@@ -31,6 +31,7 @@ public class MaterialFactory {
                                        UnidadMedida unidadBase) {
         log.debug("Reconstruyendo material desde DTO: {}", dto.getCodigo());
         
+        // NO establecer materialId - dejar que Hibernate lo genere con @UuidGenerator
         Material material = Material.builder()
                 .codigo(dto.getCodigo())
                 .nombre(dto.getNombre())
@@ -52,13 +53,8 @@ public class MaterialFactory {
             material.setReordenConfig(config);
         }
 
-        // Crear inventario inicial
-        Inventario inventario = Inventario.builder()
-                .material(material)
-                .cantidadDisponible(BigDecimal.ZERO)
-                .cantidadComprometida(BigDecimal.ZERO)
-                .build();
-        material.setInventario(inventario);
+        // NO crear inventario aquí - será creado por el servicio que lo necesite
+        // Cada servicio (crear, importar) debe manejar su propio inventario inicial
 
         return material;
     }

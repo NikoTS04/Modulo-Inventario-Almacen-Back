@@ -29,6 +29,7 @@ public class MaterialService {
     private final MaterialRepository materialRepository;
     private final CategoriaMaterialRepository categoriaRepository;
     private final UnidadMedidaRepository unidadRepository;
+    private final InventarioRepository inventarioRepository;
     private final MaterialFactory materialFactory;
     private final MaterialMapper materialMapper;
 
@@ -52,8 +53,17 @@ public class MaterialService {
         Material material = materialFactory.reconstruirDesdeDTO(dto, categoria, unidad);
         material.setUsuarioCreacion("system"); // TODO: obtener del contexto de seguridad
         
-        // Guardar
+        // Guardar material
         Material saved = materialRepository.save(material);
+        
+        // Crear inventario inicial con stock cero
+        Inventario inventario = Inventario.builder()
+                .material(saved)
+                .cantidadDisponible(java.math.BigDecimal.ZERO)
+                .cantidadComprometida(java.math.BigDecimal.ZERO)
+                .build();
+        inventarioRepository.save(inventario);
+        
         log.info("Material creado exitosamente con ID: {}", saved.getMaterialId());
         
         return materialMapper.toDetailDTO(saved);
