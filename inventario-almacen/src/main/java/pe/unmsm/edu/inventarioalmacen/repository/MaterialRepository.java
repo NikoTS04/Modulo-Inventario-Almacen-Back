@@ -22,6 +22,24 @@ public interface MaterialRepository extends JpaRepository<Material, UUID> {
     @Query("SELECT m FROM Material m WHERE m.categoria.categoriaId = :categoriaId AND m.activo = :activo")
     Page<Material> findByCategoriaIdAndActivo(@Param("categoriaId") UUID categoriaId, @Param("activo") boolean activo, Pageable pageable);
     
+    @Query("SELECT m FROM Material m WHERE m.categoria.categoriaId = :categoriaId")
+    Page<Material> findByCategoriaId(@Param("categoriaId") UUID categoriaId, Pageable pageable);
+    
+    @Query("SELECT m FROM Material m WHERE m.activo = :activo")
+    Page<Material> findByActivo(@Param("activo") boolean activo, Pageable pageable);
+    
+    @Query("SELECT m FROM Material m WHERE LOWER(m.codigo) LIKE :search OR LOWER(m.nombre) LIKE :search")
+    Page<Material> findBySearch(@Param("search") String search, Pageable pageable);
+    
+    @Query("SELECT m FROM Material m WHERE (LOWER(m.codigo) LIKE :search OR LOWER(m.nombre) LIKE :search) AND m.activo = :activo")
+    Page<Material> findBySearchAndActivo(@Param("search") String search, @Param("activo") boolean activo, Pageable pageable);
+    
+    @Query("SELECT m FROM Material m WHERE (LOWER(m.codigo) LIKE :search OR LOWER(m.nombre) LIKE :search) AND m.categoria.categoriaId = :categoriaId")
+    Page<Material> findBySearchAndCategoria(@Param("search") String search, @Param("categoriaId") UUID categoriaId, Pageable pageable);
+    
+    @Query("SELECT m FROM Material m WHERE (LOWER(m.codigo) LIKE :search OR LOWER(m.nombre) LIKE :search) AND m.categoria.categoriaId = :categoriaId AND m.activo = :activo")
+    Page<Material> findBySearchAndCategoriaAndActivo(@Param("search") String search, @Param("categoriaId") UUID categoriaId, @Param("activo") boolean activo, Pageable pageable);
+    
     @Query("SELECT m FROM Material m WHERE LOWER(m.nombre) LIKE LOWER(CONCAT('%', :nombre, '%'))")
     List<Material> findByNombreContaining(@Param("nombre") String nombre);
     

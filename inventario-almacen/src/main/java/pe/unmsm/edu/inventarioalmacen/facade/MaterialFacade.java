@@ -30,9 +30,9 @@ public class MaterialFacade {
      * Consulta materiales con filtros, delegando a MaterialService
      */
     public MaterialListResponseDTO consultarMateriales(int page, int limit, String sort, 
-                                                       UUID categoria, Boolean activo) {
-        log.debug("Facade: Consultando materiales - page: {}, limit: {}", page, limit);
-        return materialService.consultarMateriales(page, limit, sort, categoria, activo);
+                                                       UUID categoria, Boolean activo, String search) {
+        log.debug("Facade: Consultando materiales - page: {}, limit: {}, search: {}", page, limit, search);
+        return materialService.consultarMateriales(page, limit, sort, categoria, activo, search);
     }
 
     /**

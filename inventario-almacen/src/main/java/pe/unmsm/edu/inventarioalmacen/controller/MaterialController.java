@@ -26,10 +26,13 @@ public class MaterialController {
             @RequestParam(defaultValue = "10") int limit,
             @RequestParam(required = false) String sort,
             @RequestParam(required = false) UUID categoria,
-            @RequestParam(required = false) Boolean activo) {
+            @RequestParam(required = false) Boolean activo,
+            @RequestParam(required = false) String search) {
         
-        log.info("GET /materials - page: {}, limit: {}", page, limit);
-        MaterialListResponseDTO response = materialFacade.consultarMateriales(page, limit, sort, categoria, activo);
+        log.info("GET /materials - page: {}, limit: {}, search: {}, categoria: {}, activo: {}", 
+                page, limit, search, categoria, activo);
+        MaterialListResponseDTO response = materialFacade.consultarMateriales(
+                page, limit, sort, categoria, activo, search);
         return ResponseEntity.ok(response);
     }
 

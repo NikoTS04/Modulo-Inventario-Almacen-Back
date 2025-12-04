@@ -189,16 +189,35 @@ public class MaterialService {
     }
 
     @Transactional(readOnly = true)
-    public MaterialListResponseDTO consultarMateriales(int page, int limit, String sortBy, UUID categoriaId, Boolean activo) {
-        log.debug("Consultando materiales - página: {}, límite: {}", page, limit);
+    public MaterialListResponseDTO consultarMateriales(int page, int limit, String sortBy, 
+                                                       UUID categoriaId, Boolean activo, String search) {
+        log.debug("Consultando materiales - página: {}, límite: {}, búsqueda: '{}'", page, limit, search);
         
         Sort sort = Sort.by(Sort.Direction.ASC, sortBy != null ? sortBy : "nombre");
         Pageable pageable = PageRequest.of(page, limit, sort);
         
         Page<Material> materialesPage;
         
-        if (categoriaId != null && activo != null) {
+        // Aplicar filtros según los parámetros recibidos
+        if (search != null && !search.trim().isEmpty()) {
+            String searchTerm = "%" + search.toLowerCase() + "%";
+            
+            if (categoriaId != null && activo != null) {
+                materialesPage = materialRepository.findBySearchAndCategoriaAndActivo(
+                        searchTerm, categoriaId, activo, pageable);
+            } else if (categoriaId != null) {
+                materialesPage = materialRepository.findBySearchAndCategoria(searchTerm, categoriaId, pageable);
+            } else if (activo != null) {
+                materialesPage = materialRepository.findBySearchAndActivo(searchTerm, activo, pageable);
+            } else {
+                materialesPage = materialRepository.findBySearch(searchTerm, pageable);
+            }
+        } else if (categoriaId != null && activo != null) {
             materialesPage = materialRepository.findByCategoriaIdAndActivo(categoriaId, activo, pageable);
+        } else if (categoriaId != null) {
+            materialesPage = materialRepository.findByCategoriaId(categoriaId, pageable);
+        } else if (activo != null) {
+            materialesPage = materialRepository.findByActivo(activo, pageable);
         } else {
             materialesPage = materialRepository.findAll(pageable);
         }
