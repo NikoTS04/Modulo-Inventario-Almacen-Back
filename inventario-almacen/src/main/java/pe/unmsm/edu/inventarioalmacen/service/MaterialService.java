@@ -56,15 +56,21 @@ public class MaterialService {
         // Guardar material
         Material saved = materialRepository.save(material);
         
-        // Crear inventario inicial con stock cero
+        // Crear inventario inicial con stock proporcionado o cero
+        java.math.BigDecimal stockInicial = java.math.BigDecimal.ZERO;
+        if (dto.getStockInicial() != null && dto.getStockInicial() > 0) {
+            stockInicial = java.math.BigDecimal.valueOf(dto.getStockInicial());
+            log.info("Creando material con stock inicial: {}", stockInicial);
+        }
+        
         Inventario inventario = Inventario.builder()
                 .material(saved)
-                .cantidadDisponible(java.math.BigDecimal.ZERO)
+                .cantidadDisponible(stockInicial)
                 .cantidadComprometida(java.math.BigDecimal.ZERO)
                 .build();
         inventarioRepository.save(inventario);
         
-        log.info("Material creado exitosamente con ID: {}", saved.getMaterialId());
+        log.info("Material creado exitosamente con ID: {} y stock inicial: {}", saved.getMaterialId(), stockInicial);
         
         return materialMapper.toDetailDTO(saved);
     }
@@ -72,7 +78,7 @@ public class MaterialService {
     public MaterialDetailDTO editarMaterial(UUID materialId, MaterialCreateDTO dto) {
         log.info("Editando material ID: {}", materialId);
         
-        Material material = materialRepository.findById(materialId)
+        Material material = materialRepository.findByIdWithDetails(materialId)
                 .orElseThrow(() -> new ResourceNotFoundException("Material", "id", materialId));
         
         // Verificar código único si cambió
@@ -101,6 +107,31 @@ public class MaterialService {
                     dto.getReordenConfig().getPuntoReorden(),
                     dto.getReordenConfig().getActivarAlerta() != null ? dto.getReordenConfig().getActivarAlerta() : true
             );
+        }
+        
+        // Ajustar stock si se proporciona un nuevo valor
+        if (dto.getStockInicial() != null && dto.getStockInicial() >= 0) {
+            Inventario inventario = material.getInventario();
+            if (inventario == null) {
+                // Crear inventario si no existe
+                inventario = Inventario.builder()
+                        .material(material)
+                        .cantidadDisponible(java.math.BigDecimal.valueOf(dto.getStockInicial()))
+                        .cantidadComprometida(java.math.BigDecimal.ZERO)
+                        .build();
+                inventarioRepository.save(inventario);
+                log.info("Inventario creado con stock: {}", dto.getStockInicial());
+            } else {
+                // Actualizar stock existente
+                inventario.setCantidadDisponible(java.math.BigDecimal.valueOf(dto.getStockInicial()));
+                inventarioRepository.save(inventario);
+                log.info("Stock actualizado a: {}", dto.getStockInicial());
+            }
+        }
+        
+        // Actualizar estado activo si está presente
+        if (dto.getActivo() != null) {
+            material.setActivo(dto.getActivo());
         }
         
         Material updated = materialRepository.save(material);

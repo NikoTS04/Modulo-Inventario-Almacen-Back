@@ -43,4 +43,32 @@ public class UnidadMedidaController {
         UnidadDTO updated = unidadService.actualizarUnidad(id, dto);
         return ResponseEntity.ok(updated);
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<UnidadDTO> desactivarUnidad(@PathVariable UUID id) {
+        log.info("DELETE /units/{} - Desactivando unidad", id);
+        UnidadDTO desactivada = unidadService.desactivarUnidad(id);
+        return ResponseEntity.ok(desactivada);
+    }
+
+    @PostMapping("/{id}/activate")
+    public ResponseEntity<UnidadDTO> activarUnidad(@PathVariable UUID id) {
+        log.info("POST /units/{}/activate - Activando unidad", id);
+        UnidadDTO activada = unidadService.activarUnidad(id);
+        return ResponseEntity.ok(activada);
+    }
+
+    @DeleteMapping("/{id}/permanent")
+    public ResponseEntity<Void> eliminarPermanente(@PathVariable UUID id) {
+        log.info("DELETE /units/{}/permanent - Eliminando permanentemente", id);
+        unidadService.eliminarPermanente(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{id}/has-materials")
+    public ResponseEntity<Boolean> tieneMateriales(@PathVariable UUID id) {
+        log.info("GET /units/{}/has-materials", id);
+        boolean hasMaterials = unidadService.tieneMateriales(id);
+        return ResponseEntity.ok(hasMaterials);
+    }
 }

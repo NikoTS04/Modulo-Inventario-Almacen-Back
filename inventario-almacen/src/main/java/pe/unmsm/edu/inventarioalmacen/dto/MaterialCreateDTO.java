@@ -31,4 +31,7 @@ public class MaterialCreateDTO {
     private Boolean activo;
     
     private ReordenConfigDTO reordenConfig;
+    
+    // Stock inicial al crear o ajuste de stock al editar
+    private Double stockInicial;
 }

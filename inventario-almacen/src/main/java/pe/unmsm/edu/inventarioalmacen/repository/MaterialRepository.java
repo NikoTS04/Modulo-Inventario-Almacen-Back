@@ -45,4 +45,9 @@ public interface MaterialRepository extends JpaRepository<Material, UUID> {
     
     @Query("SELECT m FROM Material m LEFT JOIN FETCH m.categoria LEFT JOIN FETCH m.unidadBase WHERE m.materialId = :id")
     Optional<Material> findByIdWithDetails(@Param("id") UUID id);
+
+    // Métodos para verificar relaciones antes de eliminar
+    long countByCategoriaCategoriaId(UUID categoriaId);
+
+    long countByUnidadBaseUnidadId(UUID unidadId);
 }

@@ -10,6 +10,7 @@ import pe.unmsm.edu.inventarioalmacen.exception.DuplicateResourceException;
 import pe.unmsm.edu.inventarioalmacen.exception.ResourceNotFoundException;
 import pe.unmsm.edu.inventarioalmacen.mapper.MaterialMapper;
 import pe.unmsm.edu.inventarioalmacen.repository.CategoriaMaterialRepository;
+import pe.unmsm.edu.inventarioalmacen.repository.MaterialRepository;
 
 import java.util.List;
 import java.util.UUID;
@@ -22,6 +23,7 @@ import java.util.stream.Collectors;
 public class CategoriaService {
 
     private final CategoriaMaterialRepository categoriaRepository;
+    private final MaterialRepository materialRepository;
     private final MaterialMapper mapper;
 
     @Transactional(readOnly = true)
@@ -79,5 +81,53 @@ public class CategoriaService {
         
         CategoriaMaterial updated = categoriaRepository.save(categoria);
         return mapper.toCategoriaDTO(updated);
+    }
+    
+    public void desactivarCategoria(UUID id) {
+        log.info("Desactivando categoría ID: {}", id);
+        CategoriaMaterial categoria = categoriaRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Categoría", "id", id));
+        categoria.setActivo(false);
+        categoriaRepository.save(categoria);
+        log.info("Categoría desactivada exitosamente");
+    }
+    
+    public CategoriaDTO activarCategoria(UUID id) {
+        log.info("Activando categoría ID: {}", id);
+        CategoriaMaterial categoria = categoriaRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Categoría", "id", id));
+        categoria.setActivo(true);
+        CategoriaMaterial updated = categoriaRepository.save(categoria);
+        log.info("Categoría activada exitosamente");
+        return mapper.toCategoriaDTO(updated);
+    }
+    
+    public void eliminarPermanente(UUID id) {
+        log.info("Eliminando permanentemente categoría ID: {}", id);
+        
+        CategoriaMaterial categoria = categoriaRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Categoría", "id", id));
+        
+        // Verificar si tiene materiales asignados
+        if (tieneMateriales(id)) {
+            throw new IllegalStateException(
+                "No se puede eliminar la categoría porque tiene materiales asignados. " +
+                "Primero reasigne o elimine los materiales asociados."
+            );
+        }
+        
+        categoriaRepository.delete(categoria);
+        log.info("Categoría eliminada permanentemente");
+    }
+    
+    @Transactional(readOnly = true)
+    public boolean tieneMateriales(UUID categoriaId) {
+        // Verificar que la categoría existe
+        categoriaRepository.findById(categoriaId)
+                .orElseThrow(() -> new ResourceNotFoundException("Categoría", "id", categoriaId));
+        
+        // Contar materiales asociados a esta categoría
+        long count = materialRepository.countByCategoriaCategoriaId(categoriaId);
+        return count > 0;
     }
 }

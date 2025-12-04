@@ -43,4 +43,32 @@ public class CategoriaController {
         CategoriaDTO updated = categoriaService.actualizarCategoria(id, dto);
         return ResponseEntity.ok(updated);
     }
+    
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> desactivarCategoria(@PathVariable UUID id) {
+        log.info("DELETE /categories/{}", id);
+        categoriaService.desactivarCategoria(id);
+        return ResponseEntity.noContent().build();
+    }
+    
+    @PostMapping("/{id}/activate")
+    public ResponseEntity<CategoriaDTO> activarCategoria(@PathVariable UUID id) {
+        log.info("POST /categories/{}/activate", id);
+        CategoriaDTO activated = categoriaService.activarCategoria(id);
+        return ResponseEntity.ok(activated);
+    }
+    
+    @DeleteMapping("/{id}/permanent")
+    public ResponseEntity<Void> eliminarCategoriaPermanente(@PathVariable UUID id) {
+        log.info("DELETE /categories/{}/permanent", id);
+        categoriaService.eliminarPermanente(id);
+        return ResponseEntity.noContent().build();
+    }
+    
+    @GetMapping("/{id}/has-materials")
+    public ResponseEntity<Boolean> tieneMateriales(@PathVariable UUID id) {
+        log.info("GET /categories/{}/has-materials", id);
+        boolean hasMaterials = categoriaService.tieneMateriales(id);
+        return ResponseEntity.ok(hasMaterials);
+    }
 }
