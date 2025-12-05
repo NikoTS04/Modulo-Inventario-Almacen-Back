@@ -19,7 +19,6 @@ import java.util.UUID;
 @RequestMapping("/materials")
 @RequiredArgsConstructor
 @Slf4j
-@CrossOrigin(origins = {"http://localhost:5173", "http://localhost:3000"})
 public class MaterialController {
 
     private final MaterialFacade materialFacade;

@@ -16,7 +16,6 @@ import java.util.UUID;
 @RequestMapping("/units")
 @RequiredArgsConstructor
 @Slf4j
-@CrossOrigin(origins = {"http://localhost:5173", "http://localhost:3000"})
 public class UnidadMedidaController {
 
     private final UnidadMedidaService unidadService;

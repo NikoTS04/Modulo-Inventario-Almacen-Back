@@ -17,7 +17,6 @@ import java.util.UUID;
 @RequestMapping("/api/v1/garantias")
 @RequiredArgsConstructor
 @Slf4j
-@CrossOrigin(origins = {"http://localhost:5173", "http://localhost:3000"})
 public class GarantiaController {
 
     private final GarantiaService garantiaService;
